@@ -4,6 +4,7 @@ local Players = game:GetService("Players")
 
 local PlaceID = game.PlaceId
 local JobID = game.JobId
+local player = Players.LocalPlayer
 
 local scriptToExecute = [[
 loadstring(game:HttpGet("https://raw.githubusercontent.com/cookiesaltemail2-bot/sabserverhopper/refs/heads/main/mainhopper"))()
@@ -26,7 +27,7 @@ if success then
     for _, server in pairs(result.data) do
         if server.playing < server.maxPlayers and server.id ~= JobID then
             local tpSuccess = pcall(function()
-                TeleportService:TeleportToPlaceInstance(PlaceID, server.id, Players.LocalPlayer)
+                TeleportService:Teleport(PlaceId, player)
             end)
 
             if tpSuccess then
