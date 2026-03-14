@@ -7,7 +7,7 @@ local JobID = game.JobId
 
 local scriptToExecute = [[
 -- put your script here
-loadstring(game:HttpGet("'..scriptURL..'"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/cookiesaltemail2-bot/sabserverhopper/refs/heads/main/mainhopper"))()
 ]]
 
 -- queue script for next server
