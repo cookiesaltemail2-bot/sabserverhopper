@@ -17,22 +17,34 @@ elseif syn and syn.queue_on_teleport then
     syn.queue_on_teleport(scriptToExecute)
 end
 
-local url = "https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100"
+local function getServers()
+    local url = "https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100"
+    local success, result = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(url))
+    end)
 
-local success, result = pcall(function()
-    return HttpService:JSONDecode(game:HttpGet(url))
-end)
+    if success and result and result.data then
+        return result.data
+    end
 
-if success then
-    for _, server in pairs(result.data) do
+    return {}
+end
+
+while true do
+    local servers = getServers()
+
+    for _, server in pairs(servers) do
         if server.playing < server.maxPlayers and server.id ~= JobID then
-            local tpSuccess = pcall(function()
-                TeleportService:Teleport(PlaceId, player)
+            local success = pcall(function()
+                TeleportService:TeleportToPlaceInstance(PlaceID, server.id, player)
             end)
 
-            if tpSuccess then
-                break
+            if success then
+                return
             end
         end
     end
+
+    -- if no teleport worked, retry after delay
+    task.wait()
 end
