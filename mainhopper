@@ -1,0 +1,29 @@
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local PlaceID = game.PlaceId
+local JobID = game.JobId
+
+local scriptToExecute = [[
+-- put your script here
+loadstring(game:HttpGet("'..scriptURL..'"))()
+]]
+
+-- queue script for next server
+if queue_on_teleport then
+    queue_on_teleport(scriptToExecute)
+elseif syn and syn.queue_on_teleport then
+    syn.queue_on_teleport(scriptToExecute)
+end
+
+local url = "https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100"
+
+local servers = HttpService:JSONDecode(game:HttpGet(url))
+
+for _,v in pairs(servers.data) do
+    if v.playing < v.maxPlayers and v.id ~= JobID then
+        TeleportService:TeleportToPlaceInstance(PlaceID, v.id, Players.LocalPlayer)
+        break
+    end
+end
