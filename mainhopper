@@ -6,7 +6,6 @@ local PlaceID = game.PlaceId
 local JobID = game.JobId
 
 local scriptToExecute = [[
--- put your script here
 loadstring(game:HttpGet("https://raw.githubusercontent.com/cookiesaltemail2-bot/sabserverhopper/refs/heads/main/mainhopper"))()
 ]]
 
@@ -19,11 +18,20 @@ end
 
 local url = "https://games.roblox.com/v1/games/"..PlaceID.."/servers/Public?sortOrder=Asc&limit=100"
 
-local servers = HttpService:JSONDecode(game:HttpGet(url))
+local success, result = pcall(function()
+    return HttpService:JSONDecode(game:HttpGet(url))
+end)
 
-for _,v in pairs(servers.data) do
-    if v.playing < v.maxPlayers and v.id ~= JobID then
-        TeleportService:TeleportToPlaceInstance(PlaceID, v.id, Players.LocalPlayer)
-        break
+if success then
+    for _, server in pairs(result.data) do
+        if server.playing < server.maxPlayers and server.id ~= JobID then
+            local tpSuccess = pcall(function()
+                TeleportService:TeleportToPlaceInstance(PlaceID, server.id, Players.LocalPlayer)
+            end)
+
+            if tpSuccess then
+                break
+            end
+        end
     end
 end
